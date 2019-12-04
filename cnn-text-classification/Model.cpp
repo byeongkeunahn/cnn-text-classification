@@ -65,9 +65,15 @@ void Model::TrainSingleEpoch(size_t minibatchSize) {
     for (size_t i = 0; i < m_EpochIndices.size(); i++) m_EpochIndices[i] = i;
     std::random_shuffle(m_EpochIndices.begin(), m_EpochIndices.end());
 
+    /* prepare training mode */
+    for (auto pLayer : m_SortedLayers) {
+        pLayer->SetTesting(false);
+    }
+
     /* perform training */
+    size_t total = m_EpochIndices.size();
     size_t minibatch_count = 0;
-    size_t remaining_count = m_EpochIndices.size();
+    size_t remaining_count = total;
     float loss = 0;
     for (auto idx : m_EpochIndices) {
         /* set the training example */
@@ -92,23 +98,28 @@ void Model::TrainSingleEpoch(size_t minibatchSize) {
         remaining_count--;
         if (minibatch_count >= minibatchSize && remaining_count >= minibatchSize) {
             RequestParameterUpdates();
-            printf("Current loss: %.6f\n", loss / minibatch_count);
+            printf("[%zu/%zu] Current loss: %.6f\n", total - remaining_count, total, loss / minibatch_count);
             minibatch_count = 0;
             loss = 0;
         }
     }
     if (minibatch_count > 0) {
         RequestParameterUpdates();
-        printf("Current loss: %.6f\n", loss / minibatch_count);
+        printf("[%zu/%zu] Current loss: %.6f\n", total - remaining_count, total, loss / minibatch_count);
         minibatch_count = 0;
         loss = 0;
     }
 }
 
 void Model::Predict(Dataset *pTestDataset, int *PredictedLabels) {
+    /* prepare testing mode */
+    for (auto pLayer : m_SortedLayersForPrediction) {
+        pLayer->SetTesting(true);
+    }
+
     for (size_t i = 0; i < pTestDataset->Count(); i++) {
         /* set the test example */
-        InputDataProvider idp(m_pTrainDataset, i);
+        InputDataProvider idp(pTestDataset, i);
         m_pInputLayer->SetInputDataProvider(&idp);
 
         /* forward propagation */

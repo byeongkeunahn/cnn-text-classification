@@ -105,6 +105,9 @@ void FullyConnectedLayer::BackwardProp() {
             m_InputGrad[j] += W[i][j] * m_OutputGrad[i];
         }
     }
+
+    /* broadcasting */
+    BroadcastInputGradient(m_InputGrad);
 }
 
 float* FullyConnectedLayer::GetOutput() {

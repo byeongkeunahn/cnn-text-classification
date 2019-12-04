@@ -16,7 +16,7 @@ TextClassificationDataset::~TextClassificationDataset() {
 }
 
 size_t TextClassificationDataset::Count() {
-    return std::min(3000ull, m_seqs.size());
+    return m_seqs.size();
 }
 
 float *TextClassificationDataset::GetData(size_t idx, const char *key) {

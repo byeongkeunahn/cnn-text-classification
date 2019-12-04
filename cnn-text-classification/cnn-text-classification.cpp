@@ -57,14 +57,12 @@ int main()
     model.SetInputLayer(&layer_Input);
     model.SetOutputLayer(&layer_xEnt);
     model.SetPredictionLayer(&layer_Pred);
-    //AdadeltaOptimizer optimizer(0.95, 1e-6); // the best parameter given in the paper for MNIST
-    SGDOptimizer sgd;
-    sgd.SetLearningRate(0.02);
-    model.SetOptimizer(&sgd);
+    AdadeltaOptimizer adadelta(0.95, 1e-6); // the best parameter given in the paper for MNIST
+    model.SetOptimizer(&adadelta);
     model.Build();
 
     /* training */
-    const int Epochs = 5;
+    const int Epochs = 10;
     for (int epoch = 1; epoch <= Epochs; epoch++) {
         printf("Epoch %d start\n", epoch);
         model.TrainSingleEpoch(50);
