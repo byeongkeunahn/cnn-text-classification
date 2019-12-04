@@ -11,12 +11,12 @@ int main()
 
     /* read the dataset */
     TextClassificationDataset train(
-        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\without_oov\sarcasm-stc-wordindices-train.txt)",
-        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\without_oov\sarcasm-label-train.txt)"
+        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\with_oov_rand_init\sarcasm-stc-wordindices-train.txt)",
+        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\with_oov_rand_init\sarcasm-label-train.txt)"
     );
     TextClassificationDataset test(
-        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\without_oov\sarcasm-stc-wordindices-test.txt)",
-        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\without_oov\sarcasm-label-test.txt)"
+        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\with_oov_rand_init\sarcasm-stc-wordindices-test.txt)",
+        LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\with_oov_rand_init\sarcasm-label-test.txt)"
     );
 
     /* build the neural network */
@@ -26,16 +26,28 @@ int main()
     InputProxyLayer layer_Seqs(&layer_Input, "seqs");
     InputProxyLayer layer_Label(&layer_Input, "labels");
 
-    EmbeddingLayer layer_Embedding(LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\without_oov\sarcasm-stc.txt.embed.vec.txt)");
-    Sentence2DLayer layer_Sentence2D(&layer_Embedding, &layer_Seqs, false);
+    EmbeddingLayer layer_Embedding(LR"(D:\Dev\School2019\ML-2019\NEW (Sarcasm Classification)\01_preprocess\with_oov_rand_init\sarcasm-stc.txt.embed.vec.txt)");
+    //Sentence2DLayer layer_Sentence2D(&layer_Embedding, &layer_Seqs, false);
+    Sentence2DLayer layer_Sentence2D(&layer_Embedding, &layer_Seqs, true);
 
-    std::vector<ConvolutionLayer*> layers_Conv;
-    for (int H = 3; H <= 5; H++) {
+    std::vector<Layer*> layers_Conv;
+    int H_and_Mask[][3] = {
+        {50, 3, 7}, {50, 3, 5},
+        {50, 4, 15}, {20, 4, 13}, {20, 4, 11}, {10, 4, 9},
+        {30, 5, 31}, {10, 5, 29}, {10, 5, 27}, {10, 5, 25}, {10, 5, 23}, {10, 5, 21}, {10, 5, 19}, {10, 5, 17}
+    };
+    for (auto p : H_and_Mask) {
+        for (int i = 0; i < p[0]; i++) {
+            auto q = new SparseConvolutionLayer(&layer_Sentence2D, p[1], p[2]);
+            layers_Conv.push_back(q);
+        }
+    }
+    /*for (int H = 3; H <= 5; H++) {
         for (int i = 0; i < 100; i++) {
             auto p = new ConvolutionLayer(&layer_Sentence2D, H);
             layers_Conv.push_back(p);
         }
-    }
+    }*/
 
     std::vector<Layer*> layers_MaxPool_Ptr;
     for (auto pLayer : layers_Conv) {
@@ -45,7 +57,7 @@ int main()
 
     ConcatenationLayer layer_Concat(&layers_MaxPool_Ptr[0], (int)layers_MaxPool_Ptr.size());
     DropoutLayer layer_Dropout(&layer_Concat, 0.5);
-    FullyConnectedLayer layer_FC(&layer_Dropout, 2);
+    FullyConnectedLayer layer_FC(&layer_Dropout, 2, 0.01f);
     SoftmaxLayer layer_Softmax(&layer_FC);
     OneHotLayer layer_OneHot(&layer_Label, { 0,1 });
     CrossEntropyLossLayer layer_xEnt(&layer_Softmax, &layer_OneHot);

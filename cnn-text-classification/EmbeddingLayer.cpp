@@ -32,6 +32,7 @@ EmbeddingLayer::EmbeddingLayer(const wchar_t *lpszFilePath) {
 EmbeddingLayer::~EmbeddingLayer() {
     delete[] m_W[0];
     delete[] m_W;
+    delete[] m_OutputGrad;
 }
 
 std::vector<int> EmbeddingLayer::GetOutputDimension() {

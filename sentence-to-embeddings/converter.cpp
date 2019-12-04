@@ -97,7 +97,7 @@ void converter::word_sim_k(std::string word, int k)
 
 void converter::convert_and_save(const wchar_t *SrcPath, const wchar_t *DstPath)
 {
-    bool skip_oov = true;
+    bool skip_oov = false;
 
     std::ifstream fpi(SrcPath);
     std::ofstream fpo1(DstPath + std::wstring(L".stc"), std::ios::binary);

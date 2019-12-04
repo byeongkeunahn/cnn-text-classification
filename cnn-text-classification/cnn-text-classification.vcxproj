@@ -176,8 +176,8 @@
     <ClInclude Include="Sentence2DLayer.h" />
     <ClInclude Include="SGDOptimizer.h" />
     <ClInclude Include="SoftmaxLayer.h" />
+    <ClInclude Include="SparseConvolutionLayer.h" />
     <ClInclude Include="TextClassificationDataset.h" />
-    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdadeltaOptimizer.cpp" />
@@ -210,8 +210,8 @@
     <ClCompile Include="Sentence2DLayer.cpp" />
     <ClCompile Include="SGDOptimizer.cpp" />
     <ClCompile Include="SoftmaxLayer.cpp" />
+    <ClCompile Include="SparseConvolutionLayer.cpp" />
     <ClCompile Include="TextClassificationDataset.cpp" />
-    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -73,8 +73,8 @@ void Sentence2DLayer::BackwardProp() {
 
     for (int i = 0; i < N; i++) {
         int wid = (int)seqs[i];
-        if (wid >= 0 && wid < N) {
-            m_pEmbeddings->UpdateOutputGradientSingleWord(wid, &m_OutputBuffer[i*m_D]);
+        if (wid >= 0 && wid < m_WordCount) {
+            m_pEmbeddings->UpdateOutputGradientSingleWord(wid, &m_OutputGradBuffer[i*m_D]);
         }
     }
 }

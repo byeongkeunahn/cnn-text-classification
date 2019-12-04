@@ -19,6 +19,7 @@
 #include "ReLUActivationLayer.h"
 #include "Sentence2DLayer.h"
 #include "SoftmaxLayer.h"
+#include "SparseConvolutionLayer.h"
 
 
 /* datasets */

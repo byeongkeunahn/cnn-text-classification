@@ -4,7 +4,7 @@
 #include "Random.h"
 
 
-FullyConnectedLayer::FullyConnectedLayer(Layer *pInput, int OutDim)
+FullyConnectedLayer::FullyConnectedLayer(Layer *pInput, int OutDim, float L2reg)
 {
     auto indim = pInput->GetOutputDimension();
     if (indim.size() != 1 || indim[0] <= 0) {
@@ -15,6 +15,10 @@ FullyConnectedLayer::FullyConnectedLayer(Layer *pInput, int OutDim)
         throw std::exception("FullyConnectedLayer: OutDim <= 0 is an invalid hyperparameter");
     }
     m_outdim = OutDim;
+    if (!(L2reg >= 0)) {
+        throw std::exception("FullyConnectedLayer: L2reg should be a nonnegative real number");
+    }
+    m_L2reg = L2reg;
 
     m_Output = new float[m_outdim];
     m_OutputGrad = new float[m_outdim];
@@ -118,7 +122,9 @@ void FullyConnectedLayer::UpdateParams() {
     /* optimize the weight matrix */
     float *W = m_W[0], *WGrad = m_WGrad[0];
     for (int i = 0; i < m_indim * m_outdim; i++) {
-        W[i] = Optimize(i, W[i], WGrad[i] / m_steps);
+        float final_grad = WGrad[i] / m_steps;
+        final_grad += 2 * m_L2reg * W[i]; // L2 regularization
+        W[i] = Optimize(i, W[i], final_grad);
     }
     memset(WGrad, 0, sizeof(float) * m_indim * m_outdim);
 

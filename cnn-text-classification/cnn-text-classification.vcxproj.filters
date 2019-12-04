@@ -93,7 +93,7 @@
     <ClInclude Include="LabelPredictionLayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Vector.h">
+    <ClInclude Include="SparseConvolutionLayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,7 +176,7 @@
     <ClCompile Include="LabelPredictionLayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Vector.cpp">
+    <ClCompile Include="SparseConvolutionLayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

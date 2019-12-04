@@ -7,7 +7,7 @@
 class FullyConnectedLayer : public Layer
 {
 public:
-    FullyConnectedLayer(Layer *pInput, int OutDim);
+    FullyConnectedLayer(Layer *pInput, int OutDim, float L2reg = 0.0f);
     virtual ~FullyConnectedLayer();
 
 public:
@@ -23,6 +23,7 @@ public:
 
 private:
     int m_indim, m_outdim;
+    float m_L2reg;
     float *m_Output, *m_InputGrad;
     float **m_W, **m_WGrad;
     float *m_b, *m_bGrad;
